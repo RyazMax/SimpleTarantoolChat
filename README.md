@@ -83,28 +83,35 @@ local ws = require('websocket')
 local json = require('json')
 local ws_peers = {}
 
-ws.server('ws://0.0.0.0:8081', function (ws_peer)
-    local id = ws_peer.peer:fd()
-    table.insert(ws_peers, id, ws_peer) -- save after connection
+ws.server('ws://0.0.0.0:8081', function (ws_peer) -- функция обработчик нового соединения 
+    -- fd - файловый дескриптор
+    local id = ws_peer.peer:fd() 
+    -- сохраняем соединение в таблицу
+    table.insert(ws_peers, id, ws_peer) 
 
+    -- обработчик соединения 
     while true do
+        -- чтение сообщения от клиента
         local message, err = ws_peer:read()
         if not message or message.opcode == nil then
             break
         end
 
+        -- отправка полученного сообщения всем клиентам
         for _, ws_peer in pairs(ws_peers) do
-            ws_peer:write(json.encode({author = 'User '..id, data = message.data})) --send message to all subscribers
+            ws_peer:write(json.encode({author = 'User '..id, data = message.data})) 
         end
     end
 
-    ws_peers[id] = nil -- remove after disconnection
+    -- удаление из таблицы после отключения
+    ws_peers[id] = nil
 end)
 
 return {
+    -- функция отправки сообщения всем клиентам из консоли
     push = function (message)
         for _, ws_peer in pairs(ws_peers) do
-            ws_peer:write(json.encode({author = "ADMIN", data = message})) -- send message to all subscribers
+            ws_peer:write(json.encode({author = "ADMIN", data = message})) 
         end
     end
 }
