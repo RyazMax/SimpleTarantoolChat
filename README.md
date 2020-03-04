@@ -2,6 +2,19 @@
 
 Рассмотрим пример простого чата с использованием WebSocket API и модуля `websocket` для Tarantool.
 
+## Установка зависимостей
+
+Для раздачи статики нам понадобится `http-server`, установить его можно так
+
+```bash
+npm install http-server -g
+```
+
+Также нужно установить модуль `websocket` для Tarantool
+```bash
+tarantoolctl rocks install https://github.com/tarantool/websocket/raw/master/websocket-scm-1.rockspec
+```
+
 ## Клиент
 
 В html нам нужна форма `<form>` для отправки данных и `div` для отображения сообщений
@@ -105,19 +118,6 @@ wsserver = require('server')
 
 box.cfg{listen = 3301}
 box.schema.user.passwd(os.getenv('PASSWORD') or "")
-```
-
-## Установка зависимостей
-
-Для раздачи статики нам понадобится `http-server`, установить его можно так
-
-```bash
-npm install http-server -g
-```
-
-Также нужно установить модуль `websocket` для Tarantool
-```bash
-tarantoolctl rocks install https://github.com/tarantool/websocket/raw/master/websocket-scm-1.rockspec
 ```
 
 ## Запуск
